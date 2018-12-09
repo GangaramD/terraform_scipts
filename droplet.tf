@@ -20,7 +20,7 @@ provisioner "remote-exec" {
       "export PATH=$PATH:/usr/bin",
       # install python
       "sudo apt-get update",
-      "sudo apt-get -y install python"
+      "sudo apt-get install -y python"
        # install tomcat
 #      # "sudo apt-get update",
 #      # "sudo apt-get -y install apache2"
