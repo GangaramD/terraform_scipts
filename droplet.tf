@@ -24,8 +24,8 @@ provisioner "remote-exec" {
        # install tomcat
 #      # "sudo apt-get update",
 #      # "sudo apt-get -y install apache2"
-#    ]
-#  }
+   ]
+  }
 }
 output "droplet_ip_address" {
   value = "${digitalocean_droplet.web.ipv4_address}"
