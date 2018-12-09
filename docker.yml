@@ -3,7 +3,7 @@
   vars:
     nexus_user: admin
     nexus_pwd: admin123
-    nexus_ip: 139.59.41.116
+    nexus_ip: $nexus_ip
     nexus_docker_port: 8083
   
   tasks:
