@@ -15,13 +15,13 @@ connection {
       timeout = "2m"
   }
 
-#provisioner "remote-exec" {
-#    inline = [
-#      "export PATH=$PATH:/usr/bin",
-#      # install nginx
-#      "sudo apt-get update",
-#      "sudo apt-get -y install nginx"
-#      # install tomcat
+provisioner "remote-exec" {
+    inline = [
+      "export PATH=$PATH:/usr/bin",
+      # install python
+      "sudo apt-get update",
+      "sudo apt-get -y install python"
+       # install tomcat
 #      # "sudo apt-get update",
 #      # "sudo apt-get -y install apache2"
 #    ]
