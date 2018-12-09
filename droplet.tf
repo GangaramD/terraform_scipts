@@ -18,8 +18,10 @@ connection {
 provisioner "remote-exec" {
     inline = [
       "export PATH=$PATH:/usr/bin",
-      # install python
+      # install updgrade
       "sudo apt-get update",
+       "sleep 5",
+      #install python   
       "sudo apt-get install -y python"
        # install tomcat
 #      # "sudo apt-get update",
