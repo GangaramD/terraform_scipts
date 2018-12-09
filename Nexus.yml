@@ -1,0 +1,91 @@
+---
+- hosts: nexus 
+  vars:
+    nexus_version: 3.14.0-04
+    nexus_download_url: https://download.sonatype.com/nexus/3/nexus-{{nexus_version}}-unix.tar.gz
+    #nexus_download_url: http://www.sonatype.org/downloads/nexus-{{nexus_version}}-bundle.tar.gz
+    nexus_download_dest: /opt/nexus-{{nexus_version}}-unix.tar.gz
+    nexus_extracted_dir: /opt
+    nexus_dir: /opt/nexus
+    nexus_root: /opt
+
+  tasks:
+
+  - name: update apt
+    apt: update_cache=yes cache_valid_time=3600
+    sudo: true
+
+  - name: install wget
+    apt: pkg='wget' state=installed
+
+  - name: install jdk 8
+    apt: pkg='openjdk-8-jdk' state=installed
+    sudo: true
+
+  - name: set JDK 8 as a default alternative
+    command: update-java-alternatives --set java-1.8.0-openjdk-amd64
+    sudo: true
+
+  - name: create "nexus" group
+    group: name=nexus
+    sudo: true
+
+  - name: create "nexus" user
+    user: name=nexus group=nexus
+    sudo: true
+
+  - name: download nexus
+    get_url: url={{nexus_download_url}} dest={{nexus_download_dest}}
+    register: nexus_download
+
+  - name: create {{nexus_extracted_dir}} directory
+    file: path={{nexus_extracted_dir}} state=directory
+    #when: nexus_download.changed
+    sudo: true
+
+
+  - name: extract nexus to {{nexus_extracted_dir}}
+    command: tar -xvf /opt/nexus-{{nexus_version}}-unix.tar.gz -C {{nexus_extracted_dir}}
+    register: nexus_extract
+    sudo: true
+
+  - name: remove nexus Downloaded
+    command: rm -rf /opt/nexus-{{nexus_version}}-unix.tar.gz
+    register: nexus_delete
+    sudo: true
+
+  - name: move nexus to {{nexus_dir}} directory
+    command: mv {{nexus_extracted_dir}}/nexus-{{nexus_version}} {{nexus_dir}}
+    #when: nexus_download.changed
+    sudo: true
+
+  - name: make {{nexus_root}} directory property of "nexus" user/group
+    file: path={{nexus_root}} group=nexus owner=nexus recurse=true
+    sudo: true
+
+  - name: make {{nexus_root}} directory property of "nexus" user/group
+    file: path={{nexus_root}} group=nexus owner=nexus recurse=true
+    sudo: true
+
+  - name: make nexus runned by "nexus" user
+    lineinfile: dest={{nexus_dir}}/bin/nexus regexp="#RUN_AS_USER=" line="RUN_AS_USER=nexus" backrefs=true
+    sudo: true
+
+  - name: set NEXUS_HOME
+    lineinfile: dest={{nexus_dir}}/bin/nexus regexp="^NEXUS_HOME" line="NEXUS_HOME={{nexus_dir}}" backrefs=true
+    sudo: true
+
+  - name: create symbolic links to /etc/init.d/nexus
+    file: src={{nexus_dir}}/bin/nexus dest=/etc/init.d/nexus state=link
+    sudo: true
+
+  - name: configure runlevel links for nexus
+    command: update-rc.d nexus defaults
+    sudo: true
+
+  - name: start nexus
+    service: name=nexus state=started
+    sudo: true
+
+
+

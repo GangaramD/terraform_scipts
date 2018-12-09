@@ -1,0 +1,32 @@
+---
+- hosts: docker
+  vars:
+    nexus_user: admin
+    nexus_pwd: admin123
+    nexus_ip: 139.59.41.116
+    nexus_docker_port: 8083
+  
+  tasks:
+  - name: update apt packages
+    apt: update_cache=yes cache_valid_time=3600
+    sudo: true
+
+  - name: Install docker
+    command: apt-get -y install docker.io
+    register: docker_log
+    sudo: true
+  - name: Copy the docker.json
+    copy: 
+      src: ./daemon.json
+      dest: /etc/docker/
+    sudo: true
+  - name: restart docker
+    service:
+       name: docker
+       state: restarted
+
+  - name: Login to the nexus Artifactory
+    command: docker login -u {{nexus_user}} -p {{nexus_pwd}} {{nexus_ip}}:{{nexus_docker_port}}
+
+  
+
