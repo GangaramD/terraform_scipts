@@ -19,7 +19,7 @@ provisioner "remote-exec" {
     inline = [
       "export PATH=$PATH:/usr/bin",
       # install updgrade
-      "sudo apt-get update",
+      "sudo apt-get update || exit 1",
        "sleep 5",
       #install python   
       "sudo apt-get install -y python"
